@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Error Explainer | Professional Code Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-bottom: 4px solid #3498db;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: #3498db;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .card-header i {
+            font-size: 1.5rem;
+            color: #3498db;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 250px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            background-color: #f9f9f9;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d5dbdb;
+        }
+
+        .file-upload {
+            position: relative;
+            margin-top: 15px;
+        }
+
+        .file-upload input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border: 1px dashed #bdc3c7;
+            border-radius: 6px;
+            text-align: center;
+            color: #7f8c8d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            background-color: #ecf0f1;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        /* Result Section */
+        .result-container {
+            min-height: 300px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+        }
+
+        .placeholder-text {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .error-result {
+            display: none;
+        }
+
+        .error-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid #e74c3c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-explanation {
+            line-height: 1.7;
+            color: #2c3e50;
+            background-color: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(52, 152, 219, 0.2);
+            border-left-color: #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #eaeaea;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-code"></i>
+                    <div>
+                        <h1>Code Error Explainer</h1>
+                        <p class="tagline">Professional code analysis with human-friendly explanations</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-history"></i> History
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Code Input Section -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-upload"></i>
+                    <h2>Upload Your Code</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="language">Programming Language</label>
+                    <select id="language">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="csharp">C#</option>
+                        <option value="php">PHP</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="codeInput">Code Input</label>
+                    <textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+                </div>
+                
+                <div class="file-upload">
+                    <input type="file" id="fileUpload" accept=".py,.js,.java,.cpp,.cs,.php,.rb,.txt,.html,.css">
+                    <label for="fileUpload" class="file-upload-label">
+                        <i class="fas fa-file-upload"></i> Or upload a code file
+                    </label>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" id="analyzeBtn">
+                        <i class="fas fa-search"></i> Analyze Code
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        <i class="fas fa-broom"></i> Clear
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h2>Error Explanation</h2>
+                </div>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Analyzing your code...</p>
+                </div>
+                
+                <div class="result-container">
+                    <div class="placeholder-text" id="placeholderText">
+                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Your error explanation will appear here after analysis</p>
+                    </div>
+                    
+                    <div class="error-result" id="errorResult">
+                        <div class="error-name">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span id="errorName">Error Name</span>
+                        </div>
+                        <div class="error-explanation" id="errorExplanation">
+                            Detailed explanation of the error will appear here.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Code Error Explainer &copy; 2023 | Professional Code Analysis Tool</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const codeInput = document.getElementById('codeInput');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const fileUpload = document.getElementById('fileUpload');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const placeholderText = document.getElementById('placeholderText');
+            const errorResult = document.getElementById('errorResult');
+            const errorName = document.getElementById('errorName');
+            const errorExplanation = document.getElementById('errorExplanation');
+            const languageSelector = document.getElementById('language');
+            
+            // Analyze button click handler
+            analyzeBtn.addEventListener('click', function() {
+                const code = codeInput.value.trim();
+                
+                if (!code) {
+                    alert('Please enter some code to analyze.');
+                    return;
+                }
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                placeholderText.style.display = 'none';
+                errorResult.style.display = 'none';
+                
+                // Simulate API call (replace with actual API call to your model)
+                setTimeout(() => {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Show result
+                    placeholderText.style.display = 'none';
+                    errorResult.style.display = 'block';
+                    
+                    // For demo purposes, we'll simulate a response
+                    simulateErrorExplanation();
+                }, 2000);
+            });
+            
+            // Clear button click handler
+            clearBtn.addEventListener('click', function() {
+                codeInput.value = '';
+                placeholderText.style.display = 'block';
+                errorResult.style.display = 'none';
+                loadingIndicator.style.display = 'none';
+            });
+            
+            // File upload handler
+            fileUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    codeInput.value = e.target.result;
+                };
+                reader.readAsText(file);
+            });
+            
+            // Function to simulate error explanation (replace with actual API call)
+            function simulateErrorExplanation() {
+                const code = codeInput.value;
+                const language = languageSelector.value;
+                
+                // This is a simulation - in reality, you would call your ML model API
+                // and get the actual error name and explanation
+                
+                // Sample error explanations for demo
+                const sampleErrors = {
+                    python: {
+                        name: "SyntaxError: invalid syntax",
+                        explanation: "This error occurs when Python encounters code that doesn't follow its syntax rules. In your code, there might be a missing colon at the end of a function definition, an if statement, or a loop. Check for proper indentation, matching parentheses, brackets, and quotation marks. Also verify that you're not using reserved keywords as variable names. A common cause is mixing tabs and spaces for indentation, which can be hard to spot visually."
+                    },
+                    javascript: {
+                        name: "TypeError: Cannot read property 'x' of undefined",
+                        explanation: "This error happens when you're trying to access a property or method of an object that is undefined. This often occurs when you haven't properly initialized a variable or when a function doesn't return what you expect. Check that all your variables are properly initialized before use, and consider using optional chaining (?.) or conditional checks to handle potentially undefined values. Also verify that your function returns a value in all code paths."
+                    },
+                    java: {
+                        name: "NullPointerException",
+                        explanation: "This is a runtime exception that occurs when you try to use a reference variable that is currently pointing to null (not referring to any object). Make sure to initialize all your objects before using them. Check for method calls on objects that might be null, and consider adding null checks in your code to prevent this exception. Using tools like static analyzers can help identify potential null pointer issues before runtime."
+                    },
+                    cpp: {
+                        name: "Segmentation fault (core dumped)",
+                        explanation: "This error occurs when a program tries to access memory that it doesn't have permission to access. Common causes include dereferencing a null or uninitialized pointer, accessing an array out of bounds, or trying to access memory that has already been freed. Use tools like valgrind to detect memory issues and ensure all pointers are properly initialized. Always check pointer validity before dereferencing."
+                    },
+                    csharp: {
+                        name: "Object reference not set to an instance of an object",
+                        explanation: "This is C#'s version of a null reference exception. It occurs when you try to use a member of a type (like a method or property) on a variable that is currently null. Always check if objects are null before accessing their members, and consider using the null-conditional operator (?.) to safely access members. Enable nullable reference types in your project to get compile-time warnings about potential null references."
+                    },
+                    php: {
+                        name: "Parse error: syntax error, unexpected '}'",
+                        explanation: "This error indicates that PHP encountered a closing brace where it didn't expect one. This usually means there's a mismatch in your opening and closing braces, parentheses, or brackets. Check that all your code blocks are properly enclosed and that you haven't accidentally added an extra closing brace. Using an IDE with bracket matching can help identify these issues quickly."
+                    },
+                    ruby: {
+                        name: "NoMethodError: undefined method 'x' for nil:NilClass",
+                        explanation: "This error occurs when you try to call a method on a nil value. In Ruby, nil represents 'nothing' or 'no value'. Make sure the variable you're calling the method on actually contains an object, not nil. You can use conditional statements or the safe navigation operator (&.) to avoid this error. Check your method chains to ensure no method in the chain returns nil unexpectedly."
+                    },
+                    other: {
+                        name: "Compilation Error",
+                        explanation: "Your code contains errors that prevent it from being properly compiled or interpreted. This could be due to syntax issues, type mismatches, undefined variables, or incorrect function calls. Review your code for common mistakes like missing semicolons, incorrect variable names, or improper function usage. Using a linter or static analysis tool can help identify these issues before runtime."
+                    }
+                };
+                
+                const error = sampleErrors[language] || sampleErrors.other;
+                
+                errorName.textContent = error.name;
+                errorExplanation.textContent = error.explanation;
+            }
+        });
+    </script>
+</body>
+</html>
